@@ -46,6 +46,7 @@ Create Stack:
 `aws cloudformation create-stack --stack-name udagramservers --region eu-central-1 --template-body file://udagram-network-server-combined.yml --parameters file://network-parameters.json --capabilities CAPABILITY_IAM`
 
 _Note:_ 
+* Before running this command, AWS configure must be configured with a user Acces key and Id. 
 * Single command will deploy network and server configuration on AWS. 
 * Region can be selected according to your location. In this case `eu-central-1` is selected.
 * AWS has limited instances in each region. In order to check your limit in specific region, goto EC2 > Limits in AWS console. This script is scaled to 4 instances and may not run if your EC2 limit is less than 4. In case of lower limit ask AWS help team to increase the limit. 
