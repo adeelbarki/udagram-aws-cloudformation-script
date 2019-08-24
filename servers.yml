@@ -52,6 +52,47 @@ Resources:
                   ToPort: 65535
                   CidrIp: 0.0.0.0/0
 
+    UdagramS3ReadOnlyEC2:
+            Type: AWS::IAM::Role
+            Properties:
+                ManagedPolicyArns:
+                -   "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+                AssumeRolePolicyDocument: {
+                    "Version" : "2012-10-17",
+                    "Statement": [
+                        {
+                        "Effect": "Allow",
+                        "Principal": {
+                          "Service": [ "ec2.amazonaws.com" ]
+                        },
+                        "Action": [ "sts:AssumeRole" ]
+                      }
+                    ]
+                }
+
+    S3ReadOnlyPolicy:
+        Type: AWS::IAM::Policy
+        Properties:
+            PolicyDocument: {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": [ "s3:List" ],
+                        "Resource": "*"
+                    }
+                ]
+            }
+            PolicyName: S3bucketPolicy
+            Roles:
+              -   Ref: UdagramS3ReadOnlyEC2
+
+    InstanceProfileForUdagram:
+        Type: AWS::IAM::InstanceProfile
+        Properties:
+            Roles:
+              -   Ref: UdagramS3ReadOnlyEC2
+
     WebAppLaunchConfig:
         Type: AWS::AutoScaling::LaunchConfiguration
         Properties:
@@ -66,7 +107,8 @@ Resources:
                 aws s3 cp s3://udacity-udagram-adeel/udacity.zip .
                 unzip -o udacity.zip
             ImageId: ami-0ac05733838eabc06
-            IamInstanceProfile: S3AdminAccess
+            IamInstanceProfile: 
+                Ref: InstanceProfileForUdagram
             SecurityGroups:
               -    Ref: WebServerSecGroup
             InstanceType: t3.medium
@@ -82,8 +124,8 @@ Resources:
                   !Sub "${EnvironmentName}-PRIV-NETS"
             LaunchConfigurationName:
                 Ref: WebAppLaunchConfig
-            MinSize: '1'
-            MaxSize: '2'
+            MinSize: '4'
+            MaxSize: '4'
             TargetGroupARNs:
               - Ref: WebAppTargetGroup
 
