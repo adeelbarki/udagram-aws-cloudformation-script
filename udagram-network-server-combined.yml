@@ -34,6 +34,7 @@ Parameters:
 
 
 Resources:
+
 # ---------------- Network Configuration------------------------------------------
 
     UVPC:
@@ -197,6 +198,7 @@ Resources:
             SubnetId: !Ref PrivateSubnet2
 
 #---------------------Server Configuration --------------------------------------
+
     LBSecGroup:
         Type: AWS::EC2::SecurityGroup
         Properties: 
@@ -309,8 +311,8 @@ Resources:
                 - Ref: "PrivateSubnet2"
             LaunchConfigurationName:
                 Ref: WebAppLaunchConfig
-            MinSize: '4'
-            MaxSize: '4'
+            MinSize: '3'
+            MaxSize: '3'
             TargetGroupARNs:
               - Ref: WebAppTargetGroup
 
